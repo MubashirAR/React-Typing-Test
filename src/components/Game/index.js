@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
-import classes from './style.css';
+import {} from './style.css';
+import DBContext from '../../indexed-DB'
 
 export default () => {
   const [inputText, setInputText] = useState('');
@@ -21,6 +22,7 @@ export default () => {
     // eslint-disable-next-line
     setOriginalText,
   ] = useState(`Lorem Ipsum is simply dummy text of the printing.`.split(' '));
+  let addItem;
   const keyPress = value => {
     // eslint-disable-next-line
     let arrValue = value.split(' ');
@@ -28,18 +30,19 @@ export default () => {
     let prevWord = arrValue[arrValue.length - 2];
     setInputText(lastWord);
     if (value[value.length - 1] === ' ') {
-      console.log(value, originalText[wordIndex], value.trim() === originalText[wordIndex].trim());
+      // console.log(value, originalText[wordIndex], value.trim() === originalText[wordIndex].trim());
       if (value.trim() === originalText[wordIndex].trim()) {
         // setInputText('')
         setError(false);
         setCompleted(completed.concat(value));
         setOriginalText(originalText.slice(1, originalText.length));
-        if(!isComplete){
+        if (!isComplete) {
           let timeDiff = (Date.now() - startTime) / (1000 * 60);
           setWpm(Math.round(completed.length / timeDiff));
         }
         if (originalText.length === 1) {
-          setIsComplete(true)
+          setIsComplete(true);
+          addItem({ score: wpm }, 'scores');
         }
         // setwordIndex(wordIndex + 1)
       } else {
@@ -72,23 +75,30 @@ export default () => {
     // setError(flag);
   };
   return (
-    <Fragment>
-      <div>
-        <div className="completed" dangerouslySetInnerHTML={{ __html: completed.join(' ') }}></div>&nbsp;
-        <div className="originalText" dangerouslySetInnerHTML={{ __html: originalText.join(' ') }}></div>
-        <div>
-          <textarea
-            rows="4"
-            type="text"
-            value={inputText}
-            placeholder="Enter the text here..."
-            onChange={e => keyPress(e.target.value)}
-          ></textarea>
-        </div>
-      </div>
-      {error && <div>Mismatch</div>}
-      Mistakes: {mistakes} <br />
-      WPM: {wpm}
-    </Fragment>
+    <DBContext.Consumer>
+      {context => (
+        <Fragment>
+          {addItem = context.addItem}
+          <div>
+            <h3>Scores</h3>
+            <div>{context.scores.map(s => (<div>{s.score}</div>))}</div>
+            <div className="completed" dangerouslySetInnerHTML={{ __html: completed.join(' ') }}></div>&nbsp;
+            <div className="originalText" dangerouslySetInnerHTML={{ __html: originalText.join(' ') }}></div>
+            <div>
+              <textarea
+                rows="4"
+                type="text"
+                value={inputText}
+                placeholder="Enter the text here..."
+                onChange={e => keyPress(e.target.value)}
+              ></textarea>
+            </div>
+          </div>
+          {error && <div>Mismatch</div>}
+          Mistakes: {mistakes} <br />
+          WPM: {wpm}
+        </Fragment>
+      )}
+    </DBContext.Consumer>
   );
 };
