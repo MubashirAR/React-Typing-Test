@@ -1,0 +1,7 @@
+.completed {
+  display: inline-block;
+  color: red;
+}
+.originalText {
+  display: inline;
+}
