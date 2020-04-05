@@ -21,6 +21,7 @@ function App(props) {
       .then(async _ => {
         let resp = await getItems('scores');
         let users = await getItems('users');
+        setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser') || '{}'));
         setScores(resp);
         setUsers(users);
       })
@@ -45,7 +46,9 @@ function App(props) {
     if (!user) {
       alert(`Invalid credentials! Please try again.`);
     } else {
+      sessionStorage.setItem('loggedInUser', JSON.stringify(user));
       setLoggedInUser(user);
+      window.location.href = 'game';
     }
   };
   return (
