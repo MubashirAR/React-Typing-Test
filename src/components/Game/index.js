@@ -22,8 +22,7 @@ export default () => {
     // eslint-disable-next-line
     setOriginalText,
   ] = useState(`Lorem Ipsum is simply dummy text`.split(' '));
-  let addItem;
-  const keyPress = value => {
+  const keyPress = (value, context) => {
     // eslint-disable-next-line
     let arrValue = value.split(' ');
     let lastWord = arrValue[arrValue.length - 1];
@@ -42,7 +41,11 @@ export default () => {
         }
         if (originalText.length === 1) {
           setIsComplete(true);
-          addItem({ wpm, mistakes }, 'scores');
+          let username = 'Player';
+          if (context.loggedInUser && context.loggedInUser.username) {
+            username = context.loggedInUser.username;
+          }
+          context.addItem({ wpm, mistakes, username, timestamp: Date.now() }, 'scores');
         }
         // setwordIndex(wordIndex + 1)
       } else {
@@ -57,7 +60,6 @@ export default () => {
     <DBContext.Consumer>
       {context => (
         <div className={error ? 'error game' : 'game'}>
-          {(addItem = context.addItem)}
           <div>
             <div className="completed" dangerouslySetInnerHTML={{ __html: completed.join(' ') }}></div>&nbsp;
             <div className="originalText" dangerouslySetInnerHTML={{ __html: originalText.join(' ') }}></div>
@@ -68,7 +70,7 @@ export default () => {
                 type="text"
                 value={inputText}
                 placeholder="Enter the text here..."
-                onChange={e => keyPress(e.target.value)}
+                onChange={e => keyPress(e.target.value, context)}
               ></textarea>
             </div>
           </div>

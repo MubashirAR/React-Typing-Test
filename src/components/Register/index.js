@@ -10,6 +10,7 @@ export default props => {
       if(context.users.find(u => u.username === username)) {
         return alert(`User exists! Please try a different username.`)
       }
+      // NEVER SAVE PASSWORD IN PLAINTEXT IN A REAL APP. THIS IS FOR DEMO PURPOSES ONLY.
       let resp = await context.addItem({ email, password, username }, 'users')
       alert(`User ${username} created successfully! Please login`);
       window.location.href = 'login'

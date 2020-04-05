@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, useLocation } from 'react-router-dom';
 // import logo from './logo.svg';
 
@@ -10,13 +10,11 @@ import api from '../api';
 import Register from '../components/Register';
 import Scores from '../components/Scores';
 
-function App() {
+function App(props) {
   const [init, setInit] = useState(false);
-  // eslint-disable-next-line
   const [scores, setScores] = useState([]);
   const [users, setUsers] = useState([]);
-  // eslint-disable-next-line
-  // let addItemCustom;
+  const [loggedInUser, setLoggedInUser] = useState({});
   if (!init) {
     setInit(true);
     createDB()
@@ -31,7 +29,7 @@ function App() {
         console.error(e);
       });
   }
-  let addItemCustom = async (data, storeName) => {
+  const addItemCustom = async (data, storeName) => {
     try {
       await addItem(data, storeName);
       let resp = await getItems(storeName);
@@ -42,34 +40,43 @@ function App() {
       console.log(error);
     }
   };
-  // let url = useLocation();
-  // console.log({url})
+  const login = (username, password) => {
+    let user = users.find(u => u.username === username && u.password === password);
+    if (!user) {
+      alert(`Invalid credentials! Please try again.`);
+    } else {
+      setLoggedInUser(user);
+    }
+  };
   return (
-    <DBContext.Provider value={{ scores, getItems, addItem: addItemCustom, api, users }}>
+    <DBContext.Provider value={{ scores, getItems, addItem: addItemCustom, api, users, login, loggedInUser }}>
       <Router>
         <div>
           <nav>
             <ul>
-              <li className={window.location.href.split('/')[3] === '' && 'active-url'}>
+              {loggedInUser.username && <li> Welcome {loggedInUser.username}</li>}
+              <li className={window.location.href.split('/')[3] === '' ? 'active-url' : ''}>
                 <Link to="/">Home</Link>
               </li>
-              <li className={window.location.href.split('/')[3] === 'register' && 'active-url'}>
-                <Link to="/register">Register</Link>
-              </li>
-              <li className={window.location.href.split('/')[3] === 'login' && 'active-url'}>
-                <Link to="/login">Login</Link>
-              </li>
-              <li className={window.location.href.split('/')[3] === 'game' && 'active-url'}>
+              {!loggedInUser.username && (
+                <Fragment>
+                  <li className={window.location.href.split('/')[3] === 'register' ? 'active-url' : ''}>
+                    <Link to="/register">Register</Link>
+                  </li>
+                  <li className={window.location.href.split('/')[3] === 'login' ? 'active-url' : ''}>
+                    <Link to="/login">Login</Link>
+                  </li>
+                </Fragment>
+              )}
+              <li className={window.location.href.split('/')[3] === 'game' ? 'active-url' : ''}>
                 <Link to="/game">Game</Link>
               </li>
-              <li className={window.location.href.split('/')[3] === 'scores' && 'active-url'}>
+              <li className={window.location.href.split('/')[3] === 'scores' ? 'active-url' : ''}>
                 <Link to="/scores">Scores</Link>
               </li>
             </ul>
           </nav>
         </div>
-        {/* <div className="App">
-        </div> */}
         <Switch>
           <Route path="/register">
             <Register />
