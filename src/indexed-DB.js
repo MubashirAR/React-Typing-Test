@@ -10,7 +10,7 @@ export const createDB = () => {
       var upgradeDb = event.target.result;
       if (!upgradeDb.objectStoreNames.contains('users')) {
         console.log('create users');
-        upgradeDb.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+        upgradeDb.createObjectStore('users', { keyPath: 'username', autoIncrement: true });
       }
       if (!upgradeDb.objectStoreNames.contains('scores')) {
         console.log('create scores');

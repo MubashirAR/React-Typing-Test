@@ -3,5 +3,22 @@
   color: red;
 }
 .originalText {
-  display: inline;
+  text-align: justify;
+  /* display: inline; */
+}
+.game {
+  padding: 5rem;
+  text-align: center;
+  min-height: calc(100% - 16rem + 14px);
+}
+textarea.user-input {
+  margin-top: 3rem;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #eee;
+  line-height: 30px;
+  font-size: 25px
+}
+.error {
+  background: red;
 }

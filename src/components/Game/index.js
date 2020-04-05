@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import {} from './style.css';
-import DBContext from '../../indexed-DB'
+import DBContext from '../../indexed-DB';
 
 export default () => {
   const [inputText, setInputText] = useState('');
@@ -21,7 +21,7 @@ export default () => {
     originalText,
     // eslint-disable-next-line
     setOriginalText,
-  ] = useState(`Lorem Ipsum is simply dummy text of the printing.`.split(' '));
+  ] = useState(`Lorem Ipsum is simply dummy text`.split(' '));
   let addItem;
   const keyPress = value => {
     // eslint-disable-next-line
@@ -42,7 +42,7 @@ export default () => {
         }
         if (originalText.length === 1) {
           setIsComplete(true);
-          addItem({ score: wpm }, 'scores');
+          addItem({ wpm, mistakes }, 'scores');
         }
         // setwordIndex(wordIndex + 1)
       } else {
@@ -52,41 +52,19 @@ export default () => {
         setMistakes(mistakes + 1);
       }
     }
-    // if(!startTime){
-    //   setStartTime(Date.now());
-    // } else {
-    //   let timeDiff = (Date.now() - startTime) / (1000 * 60);
-    //   setWpm(Math.round(arrValue.length/timeDiff))
-    // }
-    // let arrText = originalText.split(' ');
-    // let flag = false;
-    // arrValue.map((v, i) => {
-    //   if (i === arrValue.length - 1) {
-    //     return;
-    //   }
-    //   if (v !== arrText[i]) {
-    //     flag = true;
-    //   }
-    // });
-
-    // if (flag) {
-    //   setMistakes(mistakes + 1);
-    // }
-    // setError(flag);
   };
   return (
     <DBContext.Consumer>
       {context => (
-        <Fragment>
-          {addItem = context.addItem}
+        <div className={error ? 'error game' : 'game'}>
+          {(addItem = context.addItem)}
           <div>
-            <h3>Scores</h3>
-            <div>{context.scores.map(s => (<div>{s.score}</div>))}</div>
             <div className="completed" dangerouslySetInnerHTML={{ __html: completed.join(' ') }}></div>&nbsp;
             <div className="originalText" dangerouslySetInnerHTML={{ __html: originalText.join(' ') }}></div>
             <div>
               <textarea
-                rows="4"
+                className="user-input"
+                rows="1"
                 type="text"
                 value={inputText}
                 placeholder="Enter the text here..."
@@ -97,7 +75,7 @@ export default () => {
           {error && <div>Mismatch</div>}
           Mistakes: {mistakes} <br />
           WPM: {wpm}
-        </Fragment>
+        </div>
       )}
     </DBContext.Consumer>
   );
